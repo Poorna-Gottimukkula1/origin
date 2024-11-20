@@ -4,6 +4,7 @@ import (
 	"path/filepath"
 	"context"
 	"strings"
+	e2e "k8s.io/kubernetes/test/e2e/framework"
 
 	g "github.com/onsi/ginkgo/v2"
 	o "github.com/onsi/gomega"
@@ -25,11 +26,11 @@ func convertBuildConfigForArch(buildconfig string, oc *exutil.CLI) string {
                 case "amd64":
                         return buildconfig
                 case "arm64":
-                        return strings.replace(buildconfig, "x86_64", "arm64")
+                        return strings.Replace(buildconfig, "x86_64", "arm64", 1)
                 case "ppc64le":
-                        return strings.replace(buildconfig, "x86_64", "ppc64le")
+                        return strings.Replace(buildconfig, "x86_64", "ppc64le", 1)
                 case "s390x":
-                        return strings.replace(buildconfig, "x86_64", "s390x")
+                        return strings.Replace(buildconfig, "x86_64", "s390x", 1)
                 default:
                 }
         }
