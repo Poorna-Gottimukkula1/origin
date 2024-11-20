@@ -89,24 +89,27 @@ var _ = g.Describe("[sig-builds][Feature:Builds][subscription-content] builds in
 		})
 
 		g.It("should succeed for RHEL 7 base images", func() {
-                        archSpecificBuildConfig := convertBuildConfigForArch(rhel7BuildConfig, oc)
-                        err := oc.Run("apply").Args("-f", archSpecificBuildConfig).Execute()
+                        //archSpecificBuildConfig := convertBuildConfigForArch(rhel7BuildConfig, oc)
+                        //err := oc.Run("apply").Args("-f", archSpecificBuildConfig).Execute()
+			err := oc.Run("apply").Args("-f", convertBuildConfigForArch(rhel7BuildConfig, oc)).Execute()
 			o.Expect(err).NotTo(o.HaveOccurred(), "creating BuildConfig")
 			br, _ := exutil.StartBuildAndWait(oc, "subscription-content-rhel7")
 			br.AssertSuccess()
 		})
 
 		g.It("should succeed for RHEL 8 base images", func() {
-                        archSpecificBuildConfig := convertBuildConfigForArch(rhel8BuildConfig, oc)
-                        err := oc.Run("apply").Args("-f", archSpecificBuildConfig).Execute()
+                        //archSpecificBuildConfig := convertBuildConfigForArch(rhel8BuildConfig, oc)
+                        //err := oc.Run("apply").Args("-f", archSpecificBuildConfig).Execute()
+                        err := oc.Run("apply").Args("-f", convertBuildConfigForArch(rhel8BuildConfig, oc)).Execute()	
 			o.Expect(err).NotTo(o.HaveOccurred(), "creating BuildConfig")
 			br, _ := exutil.StartBuildAndWait(oc, "subscription-content-rhel8")
 			br.AssertSuccess()
 		})
 
 		g.It("should succeed for RHEL 9 base images", func() {
-                        archSpecificBuildConfig := convertBuildConfigForArch(rhel9BuildConfig, oc)
-                        err := oc.Run("apply").Args("-f", archSpecificBuildConfig).Execute()
+                        //archSpecificBuildConfig := convertBuildConfigForArch(rhel9BuildConfig, oc)
+                        //err := oc.Run("apply").Args("-f", archSpecificBuildConfig).Execute()
+			err := oc.Run("apply").Args("-f", convertBuildConfigForArch(rhel9BuildConfig, oc)).Execute()
 			o.Expect(err).NotTo(o.HaveOccurred(), "creating BuildConfig")
 			br, _ := exutil.StartBuildAndWait(oc, "subscription-content-rhel9")
 			br.AssertSuccess()
