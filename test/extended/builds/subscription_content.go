@@ -13,6 +13,27 @@ import (
 	exutil "github.com/openshift/origin/test/extended/util"
 )
 
+func convertBuildConfigForArch(buildconfig string, oc *exutil.CLI) string {
+        workerNodes, err := oc.AsAdmin().KubeClient().CoreV1().Nodes().List(context.Background(), metav1.ListOptions{LabelSelector: "node-role.kubernetes.io/worker"})
+        if err != nil {
+                e2e.Logf("problem getting nodes for arch check: %s", err)
+        }
+        for _, node := range workerNodes.Items {
+                switch node.Status.NodeInfo.Architecture {
+                case "amd64":
+                        return buildconfig
+                case "arm64":
+                        return strings.replace(buildconfig, "x86_64", "arm64")
+                case "ppc64le":
+                        return strings.replace(buildconfig, "x86_64", "ppc64le")
+                case "s390x":
+                        return strings.replace(buildconfig, "x86_64", "s390x")
+                default:
+                }
+        }
+        return nil
+}
+
 var _ = g.Describe("[sig-builds][Feature:Builds][subscription-content] builds installing subscription content", func() {
 
 	defer g.GinkgoRecover()
@@ -68,21 +89,24 @@ var _ = g.Describe("[sig-builds][Feature:Builds][subscription-content] builds in
 		})
 
 		g.It("should succeed for RHEL 7 base images", func() {
-			err := oc.Run("apply").Args("-f", rhel7BuildConfig).Execute()
+                        archSpecificBuildConfig := convertBuildConfigForArch(rhel7BuildConfig, oc)
+                        err := oc.Run("apply").Args("-f", archSpecificBuildConfig).Execute()
 			o.Expect(err).NotTo(o.HaveOccurred(), "creating BuildConfig")
 			br, _ := exutil.StartBuildAndWait(oc, "subscription-content-rhel7")
 			br.AssertSuccess()
 		})
 
 		g.It("should succeed for RHEL 8 base images", func() {
-			err := oc.Run("apply").Args("-f", rhel8BuildConfig).Execute()
+                        archSpecificBuildConfig := convertBuildConfigForArch(rhel8BuildConfig, oc)
+                        err := oc.Run("apply").Args("-f", archSpecificBuildConfig).Execute()
 			o.Expect(err).NotTo(o.HaveOccurred(), "creating BuildConfig")
 			br, _ := exutil.StartBuildAndWait(oc, "subscription-content-rhel8")
 			br.AssertSuccess()
 		})
 
 		g.It("should succeed for RHEL 9 base images", func() {
-			err := oc.Run("apply").Args("-f", rhel9BuildConfig).Execute()
+                        archSpecificBuildConfig := convertBuildConfigForArch(rhel9BuildConfig, oc)
+                        err := oc.Run("apply").Args("-f", archSpecificBuildConfig).Execute()
 			o.Expect(err).NotTo(o.HaveOccurred(), "creating BuildConfig")
 			br, _ := exutil.StartBuildAndWait(oc, "subscription-content-rhel9")
 			br.AssertSuccess()
