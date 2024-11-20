@@ -2,6 +2,8 @@ package builds
 
 import (
 	"path/filepath"
+	"context"
+	"strings"
 
 	g "github.com/onsi/ginkgo/v2"
 	o "github.com/onsi/gomega"
@@ -31,7 +33,7 @@ func convertBuildConfigForArch(buildconfig string, oc *exutil.CLI) string {
                 default:
                 }
         }
-        return nil
+        return buildconfig
 }
 
 var _ = g.Describe("[sig-builds][Feature:Builds][subscription-content] builds installing subscription content", func() {
